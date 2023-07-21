@@ -53,7 +53,10 @@ public class BaseDependencyRuleFixture {
             logAnalyticsManager,
             monitorManager,
             applicationInsightsManager,
-            securityInsightsManager);
+            securityInsightsManager,
+            null,
+            null,
+            null);
   }
 
   protected void setUpResourceToDelete() {

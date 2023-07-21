@@ -18,4 +18,7 @@ public record ArmManagers(
     LogAnalyticsManager logAnalyticsManager,
     MonitorManager monitorManager,
     ApplicationInsightsManager applicationInsightsManager,
-    SecurityInsightsManager securityInsightsManager) {}
+    SecurityInsightsManager securityInsightsManager,
+    String clientId,
+    String clientSecret,
+    String tenantId) {}

@@ -418,7 +418,9 @@ public class CromwellBaseResourcesFactory extends ArmClientsDefinitionFactory {
       defaultValues.put(
           StorageAccountBlobCorsParametersNames.STORAGE_ACCOUNT_BLOB_CORS_MAX_AGE.name(),
           STORAGE_ACCOUNT_BLOB_CORS_MAX_AGE_DEFAULT);
-      defaultValues.put(ParametersNames.AKS_AAD_PROFILE_USER_GROUP_ID.name(), "00000000-0000-0000-0000-000000000000");
+      defaultValues.put(
+          ParametersNames.AKS_AAD_PROFILE_USER_GROUP_ID.name(),
+          "f346cdf6-cde2-4e4d-af8f-49237ccc57cd");
 
       return defaultValues;
     }

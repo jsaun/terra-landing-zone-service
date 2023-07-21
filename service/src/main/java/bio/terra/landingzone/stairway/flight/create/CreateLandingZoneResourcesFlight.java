@@ -98,7 +98,13 @@ public class CreateLandingZoneResourcesFlight extends Flight {
             .clientSecret(azureConfiguration.getManagedAppClientSecret())
             .tenantId(azureConfiguration.getManagedAppTenantId())
             .build();
-    return LandingZoneManager.createArmManagers(tokenCredentials, azureProfile);
+
+    return LandingZoneManager.createArmManagers(
+        tokenCredentials,
+        azureProfile,
+        azureConfiguration.getManagedAppClientId(),
+        azureConfiguration.getManagedAppClientSecret(),
+        azureConfiguration.getManagedAppTenantId());
   }
 
   private UUID getLandingZoneId(FlightMap inputParameters, LandingZoneRequest landingZoneRequest) {

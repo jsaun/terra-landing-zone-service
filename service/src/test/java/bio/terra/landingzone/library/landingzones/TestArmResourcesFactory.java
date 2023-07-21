@@ -33,7 +33,10 @@ public class TestArmResourcesFactory {
         createLogAnalyticsArmClient(),
         createMonitorArmClient(),
         createApplicationInsightsArmClient(),
-        createSecurityInsightsArmClient());
+        createSecurityInsightsArmClient(),
+        null,
+        null,
+        null);
   }
 
   public static RelayManager createRelayArmClient() {

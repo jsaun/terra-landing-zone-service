@@ -91,6 +91,15 @@ public class LandingZoneManager {
   }
 
   public static ArmManagers createArmManagers(TokenCredential credential, AzureProfile profile) {
+    return createArmManagers(credential, profile, null, null, null);
+  }
+
+  public static ArmManagers createArmManagers(
+      TokenCredential credential,
+      AzureProfile profile,
+      String clientId,
+      String clientSecret,
+      String tenantId) {
     AzureResourceManager azureResourceManager =
         AzureResourceManager.authenticate(credential, profile)
             .withSubscription(profile.getSubscriptionId());
@@ -112,7 +121,10 @@ public class LandingZoneManager {
         logAnalyticsManager,
         monitorManager,
         applicationInsightsManager,
-        securityInsightsManager);
+        securityInsightsManager,
+        clientId,
+        clientSecret,
+        tenantId);
   }
 
   public static List<FactoryDefinitionInfo> listDefinitionFactories() {

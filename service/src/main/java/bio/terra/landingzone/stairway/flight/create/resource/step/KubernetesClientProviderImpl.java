@@ -5,10 +5,9 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 
 public class KubernetesClientProviderImpl implements KubernetesClientProvider {
@@ -40,15 +39,52 @@ public class KubernetesClientProviderImpl implements KubernetesClientProvider {
             .manager()
             .serviceClient()
             .getManagedClusters()
-            .listClusterAdminCredentials(mrgName, aksClusterName)
+            .listClusterUserCredentials(mrgName, aksClusterName)
             .kubeconfigs()
             .stream()
             .findFirst()
             .orElseThrow(() -> new RuntimeException("No kubeconfig found"));
+    var stream = new ByteArrayInputStream(rawKubeConfig.value());
+    FileOutputStream writer = null;
+    try {
+      writer = new FileOutputStream("kubeconfig.txt");
+      writer.write(stream.readAllBytes());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     var kubeConfig =
         KubeConfig.loadKubeConfig(
             new InputStreamReader(
                 new ByteArrayInputStream(rawKubeConfig.value()), StandardCharsets.UTF_8));
+    for (var user : kubeConfig.getUsers()) {
+      var model = (Map<String, Object>) (((Map<String, Object>) user).get("user"));
+      var exec = (Map<String, Object>) model.get("exec");
+      var args = (ArrayList<String>) exec.get("args");
+      var argsMap = new HashMap<String, String>();
+      for (int i = 2; i < args.size(); i += 2) {
+        argsMap.put(args.get(i - 1), args.get(i));
+      }
+      var servicePrincipalArgs = new String[13];
+      servicePrincipalArgs[0] = "get-token";
+      servicePrincipalArgs[1] = "--environment";
+      servicePrincipalArgs[2] = argsMap.get("--environment");
+      servicePrincipalArgs[3] = "--server-id";
+      servicePrincipalArgs[4] = argsMap.get("--server-id");
+      servicePrincipalArgs[5] = "--client-id";
+      servicePrincipalArgs[6] = armManagers.clientId();
+      servicePrincipalArgs[7] = "--tenant-id";
+      servicePrincipalArgs[8] = armManagers.tenantId();
+      servicePrincipalArgs[9] = "--client-secret";
+      servicePrincipalArgs[10] = armManagers.clientSecret();
+      servicePrincipalArgs[11] = "--login";
+      servicePrincipalArgs[12] = "spn";
+      exec.put("args", List.of(servicePrincipalArgs));
+    }
+
+    System.out.println(armManagers.clientId());
+    System.out.println(armManagers.tenantId());
+    System.out.println(armManagers.clientSecret());
     return kubeConfig;
   }
 }
